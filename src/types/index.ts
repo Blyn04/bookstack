@@ -1,0 +1,65 @@
+export interface Book {
+  id: string;
+  title: string;
+  author: string;
+  totalPages: number;
+  currentPage: number;
+  status: BookStatus;
+  startDate?: Date;
+  finishDate?: Date;
+  rating?: number;
+  notes?: string;
+  genre?: string;
+  isbn?: string;
+}
+
+export enum BookStatus {
+  NOT_STARTED = 'not_started',
+  READING = 'reading',
+  COMPLETED = 'completed',
+  PAUSED = 'paused'
+}
+
+export interface ReadingSession {
+  id: string;
+  bookId: string;
+  date: Date;
+  pagesRead: number;
+  duration: number; // in minutes
+  notes?: string;
+}
+
+export interface Analytics {
+  totalBooks: number;
+  completedBooks: number;
+  totalPagesRead: number;
+  averagePagesPerDay: number;
+  booksThisMonth: number;
+  readingStreak: number;
+  favoriteGenre?: string;
+}
+
+export interface ReadingGoal {
+  id: string;
+  type: 'books' | 'pages';
+  target: number;
+  period: 'month' | 'year';
+  startDate: Date;
+  endDate: Date;
+  currentProgress: number;
+}
+
+export interface FilterOptions {
+  status?: BookStatus;
+  genre?: string;
+  author?: string;
+  dateRange?: {
+    start: Date;
+    end: Date;
+  };
+}
+
+export interface SearchOptions {
+  query: string;
+  searchIn: ('title' | 'author' | 'notes')[];
+}
