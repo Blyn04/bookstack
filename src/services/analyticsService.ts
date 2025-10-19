@@ -35,7 +35,7 @@ class AnalyticsService {
     const totalPages = sessions.reduce((total, session) => total + session.pagesRead, 0);
     const daysWithReading = this.getUniqueReadingDays(sessions);
     
-    return daysWithReading > 0 ? Math.round(totalPages / daysWithReading) : 0;
+    return daysWithReading.length > 0 ? Math.round(totalPages / daysWithReading.length) : 0;
   }
 
   private calculateBooksThisMonth(books: Book[]): number {
@@ -52,18 +52,21 @@ class AnalyticsService {
   private calculateReadingStreak(sessions: ReadingSession[]): number {
     if (sessions.length === 0) return 0;
     
-    const sortedSessions = sessions.sort((a, b) => b.date.getTime() - a.date.getTime());
+    const sortedSessions = sessions.sort((a, b) => {
+      const dateA = a.date instanceof Date ? a.date : new Date(a.date);
+      const dateB = b.date instanceof Date ? b.date : new Date(b.date);
+      return dateB.getTime() - dateA.getTime();
+    });
+    
     const uniqueDays = this.getUniqueReadingDays(sortedSessions);
     
     if (uniqueDays.length === 0) return 0;
     
     let streak = 1;
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
     
     for (let i = 1; i < uniqueDays.length; i++) {
-      const currentDay = new Date(uniqueDays[i]);
-      const previousDay = new Date(uniqueDays[i - 1]);
+      const currentDay = uniqueDays[i];
+      const previousDay = uniqueDays[i - 1];
       
       const dayDiff = (currentDay.getTime() - previousDay.getTime()) / (1000 * 60 * 60 * 24);
       
@@ -97,7 +100,7 @@ class AnalyticsService {
     const uniqueDays = new Set<string>();
     
     sessions.forEach(session => {
-      const date = new Date(session.date);
+      const date = session.date instanceof Date ? session.date : new Date(session.date);
       date.setHours(0, 0, 0, 0);
       uniqueDays.add(date.toISOString());
     });
