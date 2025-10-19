@@ -36,7 +36,7 @@ class AnalyticsService {
   }
 
   private calculateTotalPagesRead(books: Book[], sessions: ReadingSession[]): number {
-    return sessions.reduce((total, session) => total + session.pagesRead, 0);
+    return sessions.length > 0 ? sessions.reduce((total, session) => total + session.pagesRead, 0) : 0;
   }
 
   private calculateAveragePagesPerDay(sessions: ReadingSession[]): number {
@@ -99,7 +99,12 @@ class AnalyticsService {
       }
     });
     
-    const favoriteGenre = Object.entries(genreCount).reduce((a, b) => 
+    const genreEntries = Object.entries(genreCount);
+    if (genreEntries.length === 0) {
+      return undefined;
+    }
+    
+    const favoriteGenre = genreEntries.reduce((a, b) => 
       genreCount[a[0]] > genreCount[b[0]] ? a : b
     );
     
@@ -127,6 +132,7 @@ class AnalyticsService {
   }
 
   private calculateTotalReadingTime(sessions: ReadingSession[]): number {
+    if (sessions.length === 0) return 0;
     const totalMinutes = sessions.reduce((total, session) => total + session.duration, 0);
     return Math.round((totalMinutes / 60) * 10) / 10; // Convert to hours, rounded to 1 decimal
   }
@@ -197,6 +203,7 @@ class AnalyticsService {
     });
     
     const totalBooks = books.length;
+    if (totalBooks === 0) return [];
     
     return Object.entries(genreCount)
       .map(([genre, count]) => ({

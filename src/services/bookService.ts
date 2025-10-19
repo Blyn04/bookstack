@@ -106,7 +106,7 @@ class BookService {
 
   calculateReadingTime(bookId: string): number {
     const sessions = this.readingSessions.filter(session => session.bookId === bookId);
-    return sessions.reduce((total, session) => total + session.duration, 0);
+    return sessions.length > 0 ? sessions.reduce((total, session) => total + session.duration, 0) : 0;
   }
 
   private generateId(): string {

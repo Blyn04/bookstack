@@ -98,13 +98,13 @@ class GoalService {
     const currentMonth = new Date().getMonth();
     const currentYear = new Date().getFullYear();
     
-    return sessions
-      .filter(session => {
-        const sessionDate = new Date(session.date);
-        return sessionDate.getMonth() === currentMonth && 
-               sessionDate.getFullYear() === currentYear;
-      })
-      .reduce((total, session) => total + session.pagesRead, 0);
+    const monthlySessions = sessions.filter(session => {
+      const sessionDate = new Date(session.date);
+      return sessionDate.getMonth() === currentMonth && 
+             sessionDate.getFullYear() === currentYear;
+    });
+    
+    return monthlySessions.length > 0 ? monthlySessions.reduce((total, session) => total + session.pagesRead, 0) : 0;
   }
 
   private isDateInPeriod(date: Date, startDate: Date, endDate: Date): boolean {
