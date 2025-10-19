@@ -5,12 +5,14 @@ import BookForm from './components/BookForm';
 import Analytics from './components/Analytics';
 import SearchBar from './components/SearchBar';
 import ReadingGoals from './components/ReadingGoals';
+import ThemeToggle from './components/ThemeToggle';
+import { ThemeProvider } from './contexts/ThemeContext';
 import { Book, BookStatus, Analytics as AnalyticsType } from './types';
 import { bookService } from './services/bookService';
 import { analyticsService } from './services/analyticsService';
 import { goalService } from './services/goalService';
 
-function App() {
+function AppContent() {
   const [books, setBooks] = useState<Book[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsType | null>(null);
@@ -97,6 +99,7 @@ function App() {
       <header className="app-header">
         <h1>📚 Book Reading Tracker</h1>
         <div className="header-actions">
+          <ThemeToggle />
           <button 
             className="btn btn-primary"
             onClick={() => setShowAddForm(true)}
@@ -150,6 +153,14 @@ function App() {
         )}
       </main>
     </div>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 
