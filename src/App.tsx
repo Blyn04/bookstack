@@ -4,9 +4,11 @@ import BookList from './components/BookList';
 import BookForm from './components/BookForm';
 import Analytics from './components/Analytics';
 import SearchBar from './components/SearchBar';
+import ReadingGoals from './components/ReadingGoals';
 import { Book, BookStatus, Analytics as AnalyticsType } from './types';
 import { bookService } from './services/bookService';
 import { analyticsService } from './services/analyticsService';
+import { goalService } from './services/goalService';
 
 function App() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -19,6 +21,7 @@ function App() {
   useEffect(() => {
     loadBooks();
     loadAnalytics();
+    updateGoalProgress();
   }, []);
 
   useEffect(() => {
@@ -33,6 +36,10 @@ function App() {
   const loadAnalytics = async () => {
     const analyticsData = await analyticsService.getAnalytics();
     setAnalytics(analyticsData);
+  };
+
+  const updateGoalProgress = async () => {
+    await goalService.updateGoalProgress();
   };
 
   const filterBooks = () => {
@@ -56,18 +63,21 @@ function App() {
     const newBook = await bookService.addBook(bookData);
     setBooks(prev => [...prev, newBook]);
     loadAnalytics();
+    updateGoalProgress();
   };
 
   const handleUpdateBook = async (id: string, updates: Partial<Book>) => {
     const updatedBook = await bookService.updateBook(id, updates);
     setBooks(prev => prev.map(book => book.id === id ? updatedBook : book));
     loadAnalytics();
+    updateGoalProgress();
   };
 
   const handleDeleteBook = async (id: string) => {
     await bookService.deleteBook(id);
     setBooks(prev => prev.filter(book => book.id !== id));
     loadAnalytics();
+    updateGoalProgress();
   };
 
   const handleExportBooks = () => {
@@ -120,8 +130,14 @@ function App() {
             />
           </div>
 
-          <div className="analytics-section">
-            {analytics && <Analytics analytics={analytics} />}
+          <div className="sidebar-section">
+            <div className="analytics-section">
+              {analytics && <Analytics analytics={analytics} />}
+            </div>
+            
+            <div className="goals-section">
+              <ReadingGoals onGoalUpdate={updateGoalProgress} />
+            </div>
           </div>
         </div>
 

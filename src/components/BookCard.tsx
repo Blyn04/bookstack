@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Book, BookStatus } from '../types';
 import { bookService } from '../services/bookService';
+import ReadingSessionForm from './ReadingSessionForm';
+import ReadingSessionHistory from './ReadingSessionHistory';
 
 interface BookCardProps {
   book: Book;
@@ -10,6 +12,8 @@ interface BookCardProps {
 
 const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [showSessionForm, setShowSessionForm] = useState(false);
+  const [showSessionHistory, setShowSessionHistory] = useState(false);
   const [editData, setEditData] = useState({
     currentPage: book.currentPage,
     status: book.status,
@@ -35,19 +39,9 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
     setIsEditing(false);
   };
 
-  const handleAddReadingSession = async () => {
-    const pagesRead = prompt('How many pages did you read?');
-    if (pagesRead && !isNaN(Number(pagesRead))) {
-      const duration = prompt('How many minutes did you spend reading? (optional)');
-      await bookService.addReadingSession({
-        bookId: book.id,
-        date: new Date(),
-        pagesRead: Number(pagesRead),
-        duration: duration ? Number(duration) : 0
-      });
-      // Refresh the book data
-      window.location.reload();
-    }
+  const handleSessionSubmit = async (session: any) => {
+    // The session is already added by the form, just refresh the book data
+    window.location.reload();
   };
 
   const getStatusColor = (status: BookStatus) => {
@@ -191,19 +185,46 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
         </div>
       )}
 
-      {book.status === BookStatus.READING && (
+      <div className="book-actions-bottom">
+        {book.status === BookStatus.READING && (
+          <button 
+            className="btn btn-primary"
+            onClick={() => setShowSessionForm(true)}
+          >
+            Log Session
+          </button>
+        )}
+        
         <button 
-          className="btn btn-primary btn-full"
-          onClick={handleAddReadingSession}
+          className="btn btn-secondary"
+          onClick={() => setShowSessionHistory(true)}
         >
-          Log Reading Session
+          View History
         </button>
-      )}
+      </div>
 
       {readingTime > 0 && (
         <div className="reading-stats">
           <small>Total reading time: {Math.round(readingTime / 60)} hours</small>
         </div>
+      )}
+
+      {showSessionForm && (
+        <ReadingSessionForm
+          bookId={book.id}
+          bookTitle={book.title}
+          currentPage={book.currentPage}
+          totalPages={book.totalPages}
+          onSubmit={handleSessionSubmit}
+          onCancel={() => setShowSessionForm(false)}
+        />
+      )}
+
+      {showSessionHistory && (
+        <ReadingSessionHistory
+          bookId={book.id}
+          onClose={() => setShowSessionHistory(false)}
+        />
       )}
     </div>
   );

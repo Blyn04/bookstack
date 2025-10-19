@@ -13,6 +13,11 @@ class AnalyticsService {
     const booksThisMonth = this.calculateBooksThisMonth(books);
     const readingStreak = this.calculateReadingStreak(sessions);
     const favoriteGenre = this.calculateFavoriteGenre(books);
+    const averageRating = this.calculateAverageRating(books);
+    const totalReadingTime = this.calculateTotalReadingTime(sessions);
+    const averageBookLength = this.calculateAverageBookLength(books);
+    const completionRate = totalBooks > 0 ? Math.round((completedBooks / totalBooks) * 100) : 0;
+    const readingVelocity = this.calculateReadingVelocity(sessions);
 
     return {
       totalBooks,
@@ -22,6 +27,11 @@ class AnalyticsService {
       booksThisMonth,
       readingStreak,
       favoriteGenre,
+      averageRating,
+      totalReadingTime,
+      averageBookLength,
+      completionRate,
+      readingVelocity,
     };
   }
 
@@ -108,6 +118,35 @@ class AnalyticsService {
     return Array.from(uniqueDays).map(day => new Date(day));
   }
 
+  private calculateAverageRating(books: Book[]): number {
+    const ratedBooks = books.filter(book => book.rating && book.rating > 0);
+    if (ratedBooks.length === 0) return 0;
+    
+    const totalRating = ratedBooks.reduce((sum, book) => sum + (book.rating || 0), 0);
+    return Math.round((totalRating / ratedBooks.length) * 10) / 10;
+  }
+
+  private calculateTotalReadingTime(sessions: ReadingSession[]): number {
+    const totalMinutes = sessions.reduce((total, session) => total + session.duration, 0);
+    return Math.round((totalMinutes / 60) * 10) / 10; // Convert to hours, rounded to 1 decimal
+  }
+
+  private calculateAverageBookLength(books: Book[]): number {
+    if (books.length === 0) return 0;
+    const totalPages = books.reduce((sum, book) => sum + book.totalPages, 0);
+    return Math.round(totalPages / books.length);
+  }
+
+  private calculateReadingVelocity(sessions: ReadingSession[]): number {
+    if (sessions.length === 0) return 0;
+    
+    const totalPages = sessions.reduce((total, session) => total + session.pagesRead, 0);
+    const totalHours = sessions.reduce((total, session) => total + (session.duration / 60), 0);
+    
+    if (totalHours === 0) return 0;
+    return Math.round((totalPages / totalHours) * 10) / 10;
+  }
+
   async getMonthlyProgress(): Promise<{ month: string; booksRead: number; pagesRead: number }[]> {
     const books = await bookService.getAllBooks();
     const sessions = await bookService.getReadingSessions();
@@ -145,6 +184,52 @@ class AnalyticsService {
     return Object.entries(monthlyData)
       .map(([month, data]) => ({ month, ...data }))
       .sort((a, b) => a.month.localeCompare(b.month));
+  }
+
+  async getGenreAnalysis(): Promise<{ genre: string; count: number; percentage: number }[]> {
+    const books = await bookService.getAllBooks();
+    const genreCount: { [key: string]: number } = {};
+    
+    books.forEach(book => {
+      if (book.genre) {
+        genreCount[book.genre] = (genreCount[book.genre] || 0) + 1;
+      }
+    });
+    
+    const totalBooks = books.length;
+    
+    return Object.entries(genreCount)
+      .map(([genre, count]) => ({
+        genre,
+        count,
+        percentage: Math.round((count / totalBooks) * 100)
+      }))
+      .sort((a, b) => b.count - a.count);
+  }
+
+  async getReadingTrends(): Promise<{ date: string; pagesRead: number; sessions: number }[]> {
+    const sessions = await bookService.getReadingSessions();
+    const dailyData: { [key: string]: { pagesRead: number; sessions: number } } = {};
+    
+    // Get last 30 days
+    for (let i = 0; i < 30; i++) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      const dateKey = date.toISOString().split('T')[0];
+      dailyData[dateKey] = { pagesRead: 0, sessions: 0 };
+    }
+    
+    sessions.forEach(session => {
+      const sessionDate = new Date(session.date).toISOString().split('T')[0];
+      if (dailyData[sessionDate]) {
+        dailyData[sessionDate].pagesRead += session.pagesRead;
+        dailyData[sessionDate].sessions += 1;
+      }
+    });
+    
+    return Object.entries(dailyData)
+      .map(([date, data]) => ({ date, ...data }))
+      .sort((a, b) => a.date.localeCompare(b.date));
   }
 }
 

@@ -37,6 +37,11 @@ export interface Analytics {
   booksThisMonth: number;
   readingStreak: number;
   favoriteGenre?: string;
+  averageRating?: number;
+  totalReadingTime: number; // in hours
+  averageBookLength: number;
+  completionRate: number;
+  readingVelocity: number; // pages per hour
 }
 
 export interface ReadingGoal {
@@ -47,6 +52,8 @@ export interface ReadingGoal {
   startDate: Date;
   endDate: Date;
   currentProgress: number;
+  isActive: boolean;
+  description?: string;
 }
 
 export interface FilterOptions {
