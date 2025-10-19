@@ -64,6 +64,7 @@ function App() {
     setBooks(prev => [...prev, newBook]);
     loadAnalytics();
     updateGoalProgress();
+    setShowAddForm(false); // Close the modal after adding book
   };
 
   const handleUpdateBook = async (id: string, updates: Partial<Book>) => {

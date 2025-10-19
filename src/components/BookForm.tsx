@@ -52,6 +52,17 @@ const BookForm: React.FC<BookFormProps> = ({ onSubmit, onCancel }) => {
         startDate: formData.status === BookStatus.READING ? new Date() : undefined,
         finishDate: formData.status === BookStatus.COMPLETED ? new Date() : undefined,
       });
+      // Reset form after successful submission
+      setFormData({
+        title: '',
+        author: '',
+        totalPages: 0,
+        currentPage: 0,
+        status: BookStatus.NOT_STARTED,
+        genre: '',
+        isbn: '',
+        notes: ''
+      });
     }
   };
 
