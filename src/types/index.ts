@@ -11,6 +11,7 @@ export interface Book {
   notes?: string;
   genre?: string;
   isbn?: string;
+  quotes?: Quote[];
 }
 
 export enum BookStatus {
@@ -27,6 +28,15 @@ export interface ReadingSession {
   pagesRead: number;
   duration: number; // in minutes
   notes?: string;
+}
+
+export interface Quote {
+  id: string;
+  bookId: string;
+  page?: number;
+  text: string;
+  note?: string;
+  createdAt: Date;
 }
 
 export interface Analytics {

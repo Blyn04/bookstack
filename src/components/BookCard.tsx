@@ -3,6 +3,7 @@ import { Book, BookStatus } from '../types';
 import { bookService } from '../services/bookService';
 import ReadingSessionForm from './ReadingSessionForm';
 import ReadingSessionHistory from './ReadingSessionHistory';
+import Quotes from './Quotes';
 
 interface BookCardProps {
   book: Book;
@@ -27,6 +28,10 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
   const handleSave = async () => {
     await onUpdate(book.id, editData);
     setIsEditing(false);
+  };
+
+  const handleQuotesUpdate = (updated: Book) => {
+    onUpdate(updated.id, updated);
   };
 
   const handleCancel = () => {
@@ -226,6 +231,9 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
           onClose={() => setShowSessionHistory(false)}
         />
       )}
+
+      {/* Quotes Section */}
+      <Quotes book={book} onUpdate={handleQuotesUpdate} />
     </div>
   );
 };

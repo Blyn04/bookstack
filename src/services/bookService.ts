@@ -1,4 +1,4 @@
-import { Book, BookStatus, ReadingSession } from '../types';
+import { Book, BookStatus, ReadingSession, Quote } from '../types';
 
 class BookService {
   private books: Book[] = [];
@@ -17,6 +17,9 @@ class BookService {
         ...book,
         startDate: book.startDate ? new Date(book.startDate) : undefined,
         finishDate: book.finishDate ? new Date(book.finishDate) : undefined,
+        quotes: Array.isArray(book.quotes)
+          ? book.quotes.map((q: any) => ({ ...q, createdAt: new Date(q.createdAt) }))
+          : [],
       }));
     }
     
@@ -62,6 +65,67 @@ class BookService {
     this.books[bookIndex] = { ...this.books[bookIndex], ...updates };
     this.saveToStorage();
     return this.books[bookIndex];
+  }
+
+  // Quotes API
+  async addQuote(bookId: string, quoteInput: Omit<Quote, 'id' | 'bookId' | 'createdAt'>): Promise<Book> {
+    const bookIndex = this.books.findIndex(b => b.id === bookId);
+    if (bookIndex === -1) throw new Error('Book not found');
+
+    const newQuote: Quote = {
+      id: this.generateId(),
+      bookId,
+      text: quoteInput.text,
+      note: quoteInput.note,
+      page: quoteInput.page,
+      createdAt: new Date(),
+    };
+
+    const currentQuotes = this.books[bookIndex].quotes || [];
+    this.books[bookIndex] = { ...this.books[bookIndex], quotes: [newQuote, ...currentQuotes] };
+    this.saveToStorage();
+    return this.books[bookIndex];
+  }
+
+  async deleteQuote(bookId: string, quoteId: string): Promise<Book> {
+    const bookIndex = this.books.findIndex(b => b.id === bookId);
+    if (bookIndex === -1) throw new Error('Book not found');
+    const currentQuotes = this.books[bookIndex].quotes || [];
+    this.books[bookIndex] = { ...this.books[bookIndex], quotes: currentQuotes.filter(q => q.id !== quoteId) };
+    this.saveToStorage();
+    return this.books[bookIndex];
+  }
+
+  async getQuotes(bookId: string): Promise<Quote[]> {
+    const book = this.books.find(b => b.id === bookId);
+    return book?.quotes || [];
+  }
+
+  buildQuotesMarkdown(book: Book): string {
+    const quotes = book.quotes || [];
+    const header = `# Quotes from "${book.title}" by ${book.author}`;
+    const lines = quotes.map(q => {
+      const meta: string[] = [];
+      if (q.page) meta.push(`p. ${q.page}`);
+      meta.push(new Date(q.createdAt).toLocaleDateString());
+      const metaLine = meta.length ? `> ${meta.join(' • ')}` : '';
+      const noteLine = q.note ? `\n\n> Note: ${q.note}` : '';
+      return `\n\n---\n\n> "${q.text.replace(/\n/g, ' ')}"\n${metaLine}${noteLine}`;
+    });
+    return [header, ...lines].join('');
+  }
+
+  exportQuotesMarkdown(book: Book): void {
+    const md = this.buildQuotesMarkdown(book);
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${book.title.replace(/[^a-z0-9]+/gi, '-').toLowerCase()}-quotes.md`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
   }
 
   async deleteBook(id: string): Promise<void> {
