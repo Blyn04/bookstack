@@ -1,19 +1,32 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { BookStatus } from '../types';
+import { bookService } from '../services/bookService';
 
 interface SearchBarProps {
   searchQuery: string;
   onSearchChange: (query: string) => void;
   filterStatus: BookStatus | 'all';
   onFilterChange: (status: BookStatus | 'all') => void;
+  selectedShelfId?: string | 'all';
+  onShelfChange?: (shelfId: string | 'all') => void;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({ 
   searchQuery, 
   onSearchChange, 
   filterStatus, 
-  onFilterChange 
+  onFilterChange,
+  selectedShelfId = 'all',
+  onShelfChange
 }) => {
+  const [shelves, setShelves] = useState<{id:string; name:string}[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      const data = await bookService.getShelves();
+      setShelves(data);
+    })();
+  }, []);
   const statusOptions = [
     { value: 'all', label: 'All Books' },
     { value: BookStatus.NOT_STARTED, label: 'Not Started' },

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Book, BookStatus } from '../types';
+import { Book, BookStatus, Shelf } from '../types';
 import { bookService } from '../services/bookService';
 import ReadingSessionForm from './ReadingSessionForm';
 import ReadingSessionHistory from './ReadingSessionHistory';
 import Quotes from './Quotes';
+import ShelfPicker from './ShelfPicker';
 
 interface BookCardProps {
   book: Book;
@@ -19,7 +20,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
     currentPage: book.currentPage,
     status: book.status,
     rating: book.rating || 0,
-    notes: book.notes || ''
+    notes: book.notes || '',
+    shelves: book.shelves || [] as string[]
   });
 
   const progress = bookService.calculateReadingProgress(book);
@@ -39,7 +41,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
       currentPage: book.currentPage,
       status: book.status,
       rating: book.rating || 0,
-      notes: book.notes || ''
+      notes: book.notes || '',
+      shelves: book.shelves || []
     });
     setIsEditing(false);
   };
@@ -178,6 +181,11 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
               rows={3}
             />
           </div>
+
+          <ShelfPicker 
+            shelvesSelected={editData.shelves}
+            onChange={(ids) => setEditData({ ...editData, shelves: ids })}
+          />
 
           <div className="form-actions">
             <button className="btn btn-primary" onClick={handleSave}>

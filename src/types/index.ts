@@ -12,6 +12,7 @@ export interface Book {
   genre?: string;
   isbn?: string;
   quotes?: Quote[];
+  shelves?: string[]; // array of shelf ids
 }
 
 export enum BookStatus {
@@ -79,4 +80,11 @@ export interface FilterOptions {
 export interface SearchOptions {
   query: string;
   searchIn: ('title' | 'author' | 'notes')[];
+}
+
+export interface Shelf {
+  id: string;
+  name: string; // e.g., "Cozy Reads", "DNF", "Re-reads"
+  color?: string; // optional accent color
+  createdAt: Date;
 }

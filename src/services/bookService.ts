@@ -1,8 +1,9 @@
-import { Book, BookStatus, ReadingSession, Quote } from '../types';
+import { Book, BookStatus, ReadingSession, Quote, Shelf } from '../types';
 
 class BookService {
   private books: Book[] = [];
   private readingSessions: ReadingSession[] = [];
+  private shelves: Shelf[] = [];
 
   constructor() {
     this.loadFromStorage();
@@ -11,6 +12,7 @@ class BookService {
   private loadFromStorage(): void {
     const booksData = localStorage.getItem('bookstack-books');
     const sessionsData = localStorage.getItem('bookstack-sessions');
+    const shelvesData = localStorage.getItem('bookstack-shelves');
     
     if (booksData) {
       this.books = JSON.parse(booksData).map((book: any) => ({
@@ -29,11 +31,19 @@ class BookService {
         date: new Date(session.date),
       }));
     }
+
+    if (shelvesData) {
+      this.shelves = JSON.parse(shelvesData).map((s: any) => ({
+        ...s,
+        createdAt: new Date(s.createdAt),
+      }));
+    }
   }
 
   private saveToStorage(): void {
     localStorage.setItem('bookstack-books', JSON.stringify(this.books));
     localStorage.setItem('bookstack-sessions', JSON.stringify(this.readingSessions));
+    localStorage.setItem('bookstack-shelves', JSON.stringify(this.shelves));
   }
 
   async getAllBooks(): Promise<Book[]> {
@@ -175,6 +185,38 @@ class BookService {
 
   private generateId(): string {
     return Date.now().toString(36) + Math.random().toString(36).substr(2);
+  }
+
+  // Shelves API
+  async getShelves(): Promise<Shelf[]> {
+    return [...this.shelves].sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  async addShelf(name: string, color?: string): Promise<Shelf> {
+    const shelf: Shelf = { id: this.generateId(), name, color, createdAt: new Date() };
+    this.shelves.push(shelf);
+    this.saveToStorage();
+    return shelf;
+  }
+
+  async deleteShelf(id: string): Promise<void> {
+    this.shelves = this.shelves.filter(s => s.id !== id);
+    // Remove shelf from all books
+    this.books = this.books.map(b => ({ ...b, shelves: (b.shelves || []).filter(shelfId => shelfId !== id) }));
+    this.saveToStorage();
+  }
+
+  async assignShelvesToBook(bookId: string, shelfIds: string[]): Promise<Book> {
+    const index = this.books.findIndex(b => b.id === bookId);
+    if (index === -1) throw new Error('Book not found');
+    const seen: Record<string, true> = {};
+    const deduped: string[] = [];
+    for (const id of shelfIds) {
+      if (!seen[id]) { seen[id] = true; deduped.push(id); }
+    }
+    this.books[index] = { ...this.books[index], shelves: deduped };
+    this.saveToStorage();
+    return this.books[index];
   }
 }
 

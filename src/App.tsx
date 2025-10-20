@@ -4,6 +4,7 @@ import BookList from './components/BookList';
 import BookForm from './components/BookForm';
 import Analytics from './components/Analytics';
 import SearchBar from './components/SearchBar';
+import Shelves from './components/Shelves';
 import ReadingGoals from './components/ReadingGoals';
 import ThemeToggle from './components/ThemeToggle';
 import { ThemeProvider } from './contexts/ThemeContext';
@@ -19,6 +20,7 @@ function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<BookStatus | 'all'>('all');
   const [showAddForm, setShowAddForm] = useState(false);
+  const [selectedShelfId, setSelectedShelfId] = useState<string | 'all'>('all');
 
   useEffect(() => {
     loadBooks();
@@ -28,7 +30,7 @@ function AppContent() {
 
   useEffect(() => {
     filterBooks();
-  }, [books, searchQuery, filterStatus]);
+  }, [books, searchQuery, filterStatus, selectedShelfId]);
 
   const loadBooks = async () => {
     const booksData = await bookService.getAllBooks();
@@ -56,6 +58,10 @@ function AppContent() {
 
     if (filterStatus !== 'all') {
       filtered = filtered.filter(book => book.status === filterStatus);
+    }
+
+    if (selectedShelfId !== 'all') {
+      filtered = filtered.filter(book => (book.shelves || []).includes(selectedShelfId as string));
     }
 
     setFilteredBooks(filtered);
@@ -122,6 +128,8 @@ function AppContent() {
             onSearchChange={setSearchQuery}
             filterStatus={filterStatus}
             onFilterChange={setFilterStatus}
+            selectedShelfId={selectedShelfId}
+            onShelfChange={setSelectedShelfId}
           />
         </div>
 
@@ -141,6 +149,10 @@ function AppContent() {
             
             <div className="goals-section">
               <ReadingGoals onGoalUpdate={updateGoalProgress} />
+            </div>
+
+            <div className="goals-section">
+              <Shelves selectedShelfId={selectedShelfId} onShelfChange={setSelectedShelfId} />
             </div>
           </div>
         </div>

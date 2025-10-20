@@ -435,6 +435,80 @@ body {
   font-weight: 500;
 }
 
+/* Shelves */
+.shelves {
+  background: var(--bg-secondary);
+  border-radius: 12px;
+  padding: 1rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+.shelves-header h3 {
+  margin: 0 0 0.75rem 0;
+}
+
+.shelves-add {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.shelves-add input {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.shelf-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.shelf-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.shelf-filter {
+  background: #f5f7fb;
+  border: 1px solid #e1e5e9;
+  color: #333;
+  padding: 0.4rem 0.6rem;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.shelf-filter.active {
+  background: rgba(79, 172, 254, 0.15);
+  border-color: #4facfe;
+  color: #4facfe;
+}
+
+.shelf-picker {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.shelf-chip {
+  background: #f5f7fb;
+  border: 1px solid #e1e5e9;
+  color: #333;
+  padding: 0.25rem 0.6rem;
+  border-radius: 16px;
+  font-size: 0.8rem;
+}
+
+.shelf-chip.active {
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: white;
+  border-color: transparent;
+}
+
 /* Quotes */
 .quotes-section {
   margin-top: 1rem;
