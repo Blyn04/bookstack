@@ -47,12 +47,14 @@ export interface Analytics {
   averagePagesPerDay: number;
   booksThisMonth: number;
   readingStreak: number;
+  longestStreak?: number;
   favoriteGenre?: string;
   averageRating?: number;
   totalReadingTime: number; // in hours
   averageBookLength: number;
   completionRate: number;
   readingVelocity: number; // pages per hour
+  badges?: BadgeAchievement[];
 }
 
 export interface ReadingGoal {
@@ -87,4 +89,10 @@ export interface Shelf {
   name: string; // e.g., "Cozy Reads", "DNF", "Re-reads"
   color?: string; // optional accent color
   createdAt: Date;
+}
+
+export interface BadgeAchievement {
+  id: string; // e.g., streak-7, books-5, pages-1000
+  label: string; // Human readable name
+  earnedAt: Date;
 }

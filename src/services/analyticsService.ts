@@ -11,7 +11,7 @@ class AnalyticsService {
     const totalPagesRead = this.calculateTotalPagesRead(books, sessions);
     const averagePagesPerDay = this.calculateAveragePagesPerDay(sessions);
     const booksThisMonth = this.calculateBooksThisMonth(books);
-    const readingStreak = this.calculateReadingStreak(sessions);
+    const { currentStreak, longestStreak } = this.calculateReadingStreaks(sessions);
     const favoriteGenre = this.calculateFavoriteGenre(books);
     const averageRating = this.calculateAverageRating(books);
     const totalReadingTime = this.calculateTotalReadingTime(sessions);
@@ -25,13 +25,15 @@ class AnalyticsService {
       totalPagesRead,
       averagePagesPerDay,
       booksThisMonth,
-      readingStreak,
+      readingStreak: currentStreak,
+      longestStreak,
       favoriteGenre,
       averageRating,
       totalReadingTime,
       averageBookLength,
       completionRate,
       readingVelocity,
+      badges: this.calculateBadges({ books, sessions, currentStreak, totalPagesRead })
     };
   }
 
@@ -59,35 +61,33 @@ class AnalyticsService {
     }).length;
   }
 
-  private calculateReadingStreak(sessions: ReadingSession[]): number {
-    if (sessions.length === 0) return 0;
-    
-    const sortedSessions = sessions.sort((a, b) => {
-      const dateA = a.date instanceof Date ? a.date : new Date(a.date);
-      const dateB = b.date instanceof Date ? b.date : new Date(b.date);
-      return dateB.getTime() - dateA.getTime();
-    });
-    
-    const uniqueDays = this.getUniqueReadingDays(sortedSessions);
-    
-    if (uniqueDays.length === 0) return 0;
-    
-    let streak = 1;
-    
+  private calculateReadingStreaks(sessions: ReadingSession[]): { currentStreak: number; longestStreak: number } {
+    if (sessions.length === 0) return { currentStreak: 0, longestStreak: 0 };
+
+    const uniqueDays = this.getUniqueReadingDays(sessions).sort((a, b) => a.getTime() - b.getTime());
+    if (uniqueDays.length === 0) return { currentStreak: 0, longestStreak: 0 };
+
+    let longest = 1;
+    let current = 1;
     for (let i = 1; i < uniqueDays.length; i++) {
-      const currentDay = uniqueDays[i];
-      const previousDay = uniqueDays[i - 1];
-      
-      const dayDiff = (currentDay.getTime() - previousDay.getTime()) / (1000 * 60 * 60 * 24);
-      
-      if (dayDiff === 1) {
-        streak++;
-      } else {
-        break;
+      const prev = uniqueDays[i - 1];
+      const curr = uniqueDays[i];
+      const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
+      if (diffDays === 1) {
+        current += 1;
+        if (current > longest) longest = current;
+      } else if (diffDays > 1) {
+        current = 1;
       }
     }
-    
-    return streak;
+
+    // Calculate current streak ending today if applicable
+    const today = new Date(); today.setHours(0,0,0,0);
+    const lastDay = uniqueDays[uniqueDays.length - 1];
+    const gap = Math.round((today.getTime() - lastDay.getTime()) / (1000 * 60 * 60 * 24));
+    const currentStreak = gap === 0 ? current : (gap === 1 ? current : 0);
+
+    return { currentStreak, longestStreak: longest };
   }
 
   private calculateFavoriteGenre(books: Book[]): string | undefined {
@@ -121,6 +121,31 @@ class AnalyticsService {
     });
     
     return Array.from(uniqueDays).map(day => new Date(day));
+  }
+
+  private calculateBadges({ books, sessions, currentStreak, totalPagesRead }: { books: Book[]; sessions: ReadingSession[]; currentStreak: number; totalPagesRead: number; }) {
+    const badges: { id: string; label: string; earnedAt: Date }[] = [];
+
+    // Streak badges
+    const streakMilestones = [3, 7, 14, 30];
+    for (const m of streakMilestones) {
+      if (currentStreak >= m) badges.push({ id: `streak-${m}`, label: `${m}-day streak`, earnedAt: new Date() });
+    }
+
+    // Books completed badges
+    const completed = books.filter(b => b.status === BookStatus.COMPLETED).length;
+    const bookMilestones = [1, 5, 10, 25, 50];
+    for (const m of bookMilestones) {
+      if (completed >= m) badges.push({ id: `books-${m}`, label: `${m} books finished`, earnedAt: new Date() });
+    }
+
+    // Pages read badges
+    const pagesMilestones = [100, 500, 1000, 5000, 10000];
+    for (const m of pagesMilestones) {
+      if (totalPagesRead >= m) badges.push({ id: `pages-${m}`, label: `${m.toLocaleString()} pages`, earnedAt: new Date() });
+    }
+
+    return badges;
   }
 
   private calculateAverageRating(books: Book[]): number {

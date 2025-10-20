@@ -102,20 +102,20 @@ const Analytics: React.FC<AnalyticsProps> = ({ analytics }) => {
         </div>
 
         <div className="stat-card">
+          <div className="stat-icon">🔥</div>
+          <div className="stat-content">
+            <div className="stat-value">{analytics.readingStreak}</div>
+            <div className="stat-label">Day Streak</div>
+            <div className="stat-subtext">Longest: {analytics.longestStreak || analytics.readingStreak}</div>
+          </div>
+        </div>
+
+        <div className="stat-card">
           <div className="stat-icon">📈</div>
           <div className="stat-content">
             <div className="stat-value">{getReadingEfficiency()}</div>
             <div className="stat-label">Pages/Day</div>
             <div className="stat-subtext">Average</div>
-          </div>
-        </div>
-
-        <div className="stat-card">
-          <div className="stat-icon">⏱️</div>
-          <div className="stat-content">
-            <div className="stat-value">{analytics.totalReadingTime}</div>
-            <div className="stat-label">Hours Read</div>
-            <div className="stat-subtext">Total</div>
           </div>
         </div>
 
@@ -160,6 +160,17 @@ const Analytics: React.FC<AnalyticsProps> = ({ analytics }) => {
         <div className="favorite-genre">
           <h4>🎯 Favorite Genre</h4>
           <span className="genre-badge">{analytics.favoriteGenre}</span>
+        </div>
+      )}
+
+      {analytics.badges && analytics.badges.length > 0 && (
+        <div className="badges">
+          <h4>🏅 Achievements</h4>
+          <div className="badge-list">
+            {analytics.badges.slice(-6).map(b => (
+              <span key={b.id} className="badge-chip">{b.label}</span>
+            ))}
+          </div>
         </div>
       )}
 

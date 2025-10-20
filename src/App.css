@@ -751,6 +751,35 @@ body {
   font-weight: 600;
 }
 
+.badges {
+  background: rgba(79, 172, 254, 0.08);
+  border: 1px solid #e1e5e9;
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+.badges h4 {
+  font-size: 0.9rem;
+  color: #4facfe;
+  margin-bottom: 0.5rem;
+}
+
+.badge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.badge-chip {
+  background: #f0f6ff;
+  color: #1e6fff;
+  border: 1px solid #d6e6ff;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
 /* Monthly Chart */
 .monthly-chart {
   background: white;
