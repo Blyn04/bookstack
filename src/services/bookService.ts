@@ -55,6 +55,17 @@ class BookService {
   }
 
   async addBook(bookData: Omit<Book, 'id'>): Promise<Book> {
+    // Duplicate detection by ISBN or normalized title+author
+    const normalize = (s: string) => s.trim().toLowerCase();
+    const existing = this.books.find(b => {
+      const isbnMatch = bookData.isbn && b.isbn && normalize(bookData.isbn) === normalize(b.isbn);
+      const titleAuthorMatch = normalize(bookData.title) === normalize(b.title) && normalize(bookData.author) === normalize(b.author);
+      return Boolean(isbnMatch || titleAuthorMatch);
+    });
+    if (existing) {
+      throw new Error('This book already exists in your library.');
+    }
+
     const newBook: Book = {
       ...bookData,
       id: this.generateId(),

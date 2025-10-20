@@ -68,11 +68,15 @@ function AppContent() {
   };
 
   const handleAddBook = async (bookData: Omit<Book, 'id'>) => {
-    const newBook = await bookService.addBook(bookData);
-    setBooks(prev => [...prev, newBook]);
-    loadAnalytics();
-    updateGoalProgress();
-    setShowAddForm(false); // Close the modal after adding book
+    try {
+      const newBook = await bookService.addBook(bookData);
+      setBooks(prev => [...prev, newBook]);
+      loadAnalytics();
+      updateGoalProgress();
+      setShowAddForm(false); // Close the modal after adding book
+    } catch (err: any) {
+      alert(err?.message || 'Failed to add book');
+    }
   };
 
   const handleUpdateBook = async (id: string, updates: Partial<Book>) => {
