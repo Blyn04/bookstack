@@ -6,12 +6,14 @@ import Analytics from './components/Analytics';
 import SearchBar from './components/SearchBar';
 import Shelves from './components/Shelves';
 import ReadingGoals from './components/ReadingGoals';
+import Achievements from './components/Achievements';
 import ThemeToggle from './components/ThemeToggle';
 import { ThemeProvider } from './contexts/ThemeContext';
-import { Book, BookStatus, Analytics as AnalyticsType } from './types';
+import { Book, BookStatus, Analytics as AnalyticsType, UserAchievement } from './types';
 import { bookService } from './services/bookService';
 import { analyticsService } from './services/analyticsService';
 import { goalService } from './services/goalService';
+import { achievementService } from './services/achievementService';
 
 function AppContent() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -21,11 +23,14 @@ function AppContent() {
   const [filterStatus, setFilterStatus] = useState<BookStatus | 'all'>('all');
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedShelfId, setSelectedShelfId] = useState<string | 'all'>('all');
+  const [showAchievements, setShowAchievements] = useState(false);
+  const [newAchievements, setNewAchievements] = useState<UserAchievement[]>([]);
 
   useEffect(() => {
     loadBooks();
     loadAnalytics();
     updateGoalProgress();
+    checkAchievements();
   }, []);
 
   useEffect(() => {
@@ -44,6 +49,18 @@ function AppContent() {
 
   const updateGoalProgress = async () => {
     await goalService.updateGoalProgress();
+  };
+
+  const checkAchievements = async () => {
+    try {
+      const sessions = await bookService.getReadingSessions();
+      const newAchievements = await achievementService.checkAchievements(books, sessions);
+      if (newAchievements.length > 0) {
+        setNewAchievements(prev => [...prev, ...newAchievements]);
+      }
+    } catch (error) {
+      console.error('Error checking achievements:', error);
+    }
   };
 
   const filterBooks = () => {
@@ -73,6 +90,7 @@ function AppContent() {
       setBooks(prev => [...prev, newBook]);
       loadAnalytics();
       updateGoalProgress();
+      checkAchievements();
       setShowAddForm(false); // Close the modal after adding book
     } catch (err: any) {
       alert(err?.message || 'Failed to add book');
@@ -84,6 +102,7 @@ function AppContent() {
     setBooks(prev => prev.map(book => book.id === id ? updatedBook : book));
     loadAnalytics();
     updateGoalProgress();
+    checkAchievements();
   };
 
   const handleDeleteBook = async (id: string) => {
@@ -91,6 +110,7 @@ function AppContent() {
     setBooks(prev => prev.filter(book => book.id !== id));
     loadAnalytics();
     updateGoalProgress();
+    checkAchievements();
   };
 
   const handleExportBooks = () => {
@@ -110,6 +130,15 @@ function AppContent() {
         <h1>📚 Book Reading Tracker</h1>
         <div className="header-actions">
           <ThemeToggle />
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowAchievements(true)}
+          >
+            🏆 Achievements
+            {newAchievements.length > 0 && (
+              <span className="notification-badge">{newAchievements.length}</span>
+            )}
+          </button>
           <button 
             className="btn btn-primary"
             onClick={() => setShowAddForm(true)}
@@ -166,6 +195,27 @@ function AppContent() {
             onSubmit={handleAddBook}
             onCancel={() => setShowAddForm(false)}
           />
+        )}
+
+        {showAchievements && (
+          <div className="modal-overlay">
+            <div className="modal achievements-modal">
+              <div className="modal-header">
+                <h2>🏆 Achievements</h2>
+                <button 
+                  className="btn-icon" 
+                  onClick={() => setShowAchievements(false)}
+                >
+                  ✕
+                </button>
+              </div>
+              <Achievements 
+                onNewAchievement={(achievement) => {
+                  setNewAchievements(prev => prev.filter(a => a.achievementId !== achievement.achievementId));
+                }}
+              />
+            </div>
+          </div>
         )}
       </main>
     </div>

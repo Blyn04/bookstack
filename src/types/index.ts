@@ -96,3 +96,47 @@ export interface BadgeAchievement {
   label: string; // Human readable name
   earnedAt: Date;
 }
+
+export enum AchievementType {
+  BOOKS_READ = 'books_read',
+  PAGES_READ = 'pages_read',
+  READING_STREAK = 'reading_streak',
+  GENRE_DIVERSITY = 'genre_diversity',
+  SPEED_READER = 'speed_reader',
+  DEEP_THINKER = 'deep_thinker',
+  QUOTE_COLLECTOR = 'quote_collector',
+  READING_TIME = 'reading_time',
+  GOAL_ACHIEVER = 'goal_achiever',
+  CONSISTENT_READER = 'consistent_reader'
+}
+
+export interface Achievement {
+  id: string;
+  type: AchievementType;
+  name: string;
+  description: string;
+  icon: string;
+  requirement: number;
+  rarity: 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary';
+  category: 'milestone' | 'skill' | 'exploration' | 'dedication';
+}
+
+export interface UserAchievement {
+  achievementId: string;
+  earnedAt: Date;
+  progress: number; // 0-100
+  isEarned: boolean;
+}
+
+export interface AchievementStats {
+  totalAchievements: number;
+  earnedAchievements: number;
+  recentAchievements: UserAchievement[];
+  nextMilestones: Achievement[];
+  categoryBreakdown: {
+    milestone: number;
+    skill: number;
+    exploration: number;
+    dedication: number;
+  };
+}
