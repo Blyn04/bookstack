@@ -140,3 +140,72 @@ export interface AchievementStats {
     dedication: number;
   };
 }
+
+// Knowledge Management Types
+export interface Concept {
+  id: string;
+  name: string;
+  description?: string;
+  category?: string;
+  tags: string[];
+  relatedConcepts: string[]; // IDs of related concepts
+  books: string[]; // IDs of books where this concept appears
+  notes: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface MindMapNode {
+  id: string;
+  conceptId: string;
+  x: number;
+  y: number;
+  level: number; // 0 = center, 1 = first level, etc.
+  connections: string[]; // IDs of connected nodes
+}
+
+export interface MindMap {
+  id: string;
+  title: string;
+  bookId?: string; // Optional: if mind map is book-specific
+  nodes: MindMapNode[];
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface KnowledgeGraph {
+  concepts: Concept[];
+  relationships: ConceptRelationship[];
+  lastUpdated: Date;
+}
+
+export interface ConceptRelationship {
+  id: string;
+  sourceConceptId: string;
+  targetConceptId: string;
+  relationshipType: 'related' | 'prerequisite' | 'contradicts' | 'supports' | 'example_of';
+  strength: number; // 0-1, how strong the relationship is
+  description?: string;
+}
+
+export interface StudyMaterial {
+  id: string;
+  title: string;
+  type: 'summary' | 'mindmap' | 'concept_map' | 'flashcards' | 'notes';
+  content: string;
+  concepts: string[]; // Concept IDs
+  books: string[]; // Book IDs
+  createdAt: Date;
+  format: 'markdown' | 'pdf' | 'json';
+}
+
+export interface ReadingNote {
+  id: string;
+  bookId: string;
+  page?: number;
+  content: string;
+  concepts: string[]; // Extracted concept IDs
+  tags: string[];
+  createdAt: Date;
+  updatedAt: Date;
+}

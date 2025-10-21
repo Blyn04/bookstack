@@ -7,6 +7,7 @@ import SearchBar from './components/SearchBar';
 import Shelves from './components/Shelves';
 import ReadingGoals from './components/ReadingGoals';
 import Achievements from './components/Achievements';
+import KnowledgeManagement from './components/KnowledgeManagement';
 import ThemeToggle from './components/ThemeToggle';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Book, BookStatus, Analytics as AnalyticsType, UserAchievement } from './types';
@@ -24,6 +25,7 @@ function AppContent() {
   const [showAddForm, setShowAddForm] = useState(false);
   const [selectedShelfId, setSelectedShelfId] = useState<string | 'all'>('all');
   const [showAchievements, setShowAchievements] = useState(false);
+  const [showKnowledgeManagement, setShowKnowledgeManagement] = useState(false);
   const [newAchievements, setNewAchievements] = useState<UserAchievement[]>([]);
 
   useEffect(() => {
@@ -132,6 +134,12 @@ function AppContent() {
           <ThemeToggle />
           <button 
             className="btn btn-secondary"
+            onClick={() => setShowKnowledgeManagement(true)}
+          >
+            🧠 Knowledge
+          </button>
+          <button 
+            className="btn btn-secondary"
             onClick={() => setShowAchievements(true)}
           >
             🏆 Achievements
@@ -195,6 +203,17 @@ function AppContent() {
             onSubmit={handleAddBook}
             onCancel={() => setShowAddForm(false)}
           />
+        )}
+
+        {showKnowledgeManagement && (
+          <div className="modal-overlay">
+            <div className="modal knowledge-modal">
+              <KnowledgeManagement 
+                books={books}
+                onClose={() => setShowKnowledgeManagement(false)}
+              />
+            </div>
+          </div>
         )}
 
         {showAchievements && (
