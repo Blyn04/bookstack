@@ -93,7 +93,7 @@ function AppContent() {
       loadAnalytics();
       updateGoalProgress();
       checkAchievements();
-      setShowAddForm(false); // Close the modal after adding book
+      setShowAddForm(false); 
     } catch (err: any) {
       alert(err?.message || 'Failed to add book');
     }
