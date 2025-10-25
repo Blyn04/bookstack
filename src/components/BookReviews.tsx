@@ -315,8 +315,8 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({ book, onClose, onReview
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Write a Review for {book.title}</h3>
           <button className="btn-icon" onClick={onClose}>✕</button>

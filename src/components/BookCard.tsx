@@ -253,8 +253,8 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
       <Quotes book={book} onUpdate={handleQuotesUpdate} />
 
       {showReviews && (
-        <div className="modal-overlay">
-          <div className="modal reviews-modal">
+        <div className="modal-overlay" onClick={() => setShowReviews(false)}>
+          <div className="modal reviews-modal" onClick={(e) => e.stopPropagation()}>
             <BookReviews 
               book={book}
               onClose={() => setShowReviews(false)}

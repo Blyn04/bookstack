@@ -76,8 +76,8 @@ const ReadingSessionForm: React.FC<ReadingSessionFormProps> = ({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Log Reading Session</h2>
           <button className="btn-icon" onClick={onCancel}>✕</button>

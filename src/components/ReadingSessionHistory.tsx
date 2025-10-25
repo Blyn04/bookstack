@@ -62,8 +62,8 @@ const ReadingSessionHistory: React.FC<ReadingSessionHistoryProps> = ({ bookId, o
 
   if (loading) {
     return (
-      <div className="modal-overlay">
-        <div className="modal">
+      <div className="modal-overlay" onClick={onClose}>
+        <div className="modal" onClick={(e) => e.stopPropagation()}>
           <div className="modal-header">
             <h2>Reading Sessions</h2>
             <button className="btn-icon" onClick={onClose}>✕</button>
@@ -77,8 +77,8 @@ const ReadingSessionHistory: React.FC<ReadingSessionHistoryProps> = ({ bookId, o
   }
 
   return (
-    <div className="modal-overlay">
-      <div className="modal session-history-modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal session-history-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Reading Sessions</h2>
           <button className="btn-icon" onClick={onClose}>✕</button>

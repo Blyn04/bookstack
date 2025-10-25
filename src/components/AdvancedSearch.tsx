@@ -323,8 +323,8 @@ const AdvancedSearch: React.FC<AdvancedSearchProps> = ({ books, onSearch, onClos
       </div>
 
       {showSaveForm && (
-        <div className="modal-overlay">
-          <div className="modal">
+        <div className="modal-overlay" onClick={() => setShowSaveForm(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
               <h3>Save Search</h3>
               <button className="btn-icon" onClick={() => setShowSaveForm(false)}>✕</button>

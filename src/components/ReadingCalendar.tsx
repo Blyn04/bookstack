@@ -331,8 +331,8 @@ const AddEventModal: React.FC<AddEventModalProps> = ({ books, onClose, onEventAd
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Add Calendar Event</h3>
           <button className="btn-icon" onClick={onClose}>✕</button>

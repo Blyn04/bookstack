@@ -279,8 +279,8 @@ const CreateConceptForm: React.FC<CreateConceptFormProps> = ({ onSubmit, onCance
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal create-concept-modal">
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal create-concept-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Create Concept</h3>
           <button className="btn-icon" onClick={onCancel}>✕</button>
@@ -427,8 +427,8 @@ const EditConceptForm: React.FC<EditConceptFormProps> = ({ concept, books, onSub
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal edit-concept-modal">
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal edit-concept-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Edit Concept</h3>
           <button className="btn-icon" onClick={onCancel}>✕</button>

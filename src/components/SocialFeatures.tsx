@@ -297,36 +297,48 @@ const SocialFeatures: React.FC<SocialFeaturesProps> = ({ books, onClose }) => {
 
       {/* Create Group Modal */}
       {showCreateGroup && (
-        <CreateGroupModal 
-          onClose={() => setShowCreateGroup(false)}
-          onGroupCreated={() => {
-            setShowCreateGroup(false);
-            loadSocialData();
-          }}
-        />
+        <div className="modal-overlay" onClick={() => setShowCreateGroup(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <CreateGroupModal 
+              onClose={() => setShowCreateGroup(false)}
+              onGroupCreated={() => {
+                setShowCreateGroup(false);
+                loadSocialData();
+              }}
+            />
+          </div>
+        </div>
       )}
 
       {/* Create Challenge Modal */}
       {showCreateChallenge && (
-        <CreateChallengeModal 
-          onClose={() => setShowCreateChallenge(false)}
-          onChallengeCreated={() => {
-            setShowCreateChallenge(false);
-            loadSocialData();
-          }}
-        />
+        <div className="modal-overlay" onClick={() => setShowCreateChallenge(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <CreateChallengeModal 
+              onClose={() => setShowCreateChallenge(false)}
+              onChallengeCreated={() => {
+                setShowCreateChallenge(false);
+                loadSocialData();
+              }}
+            />
+          </div>
+        </div>
       )}
 
       {/* Share Book Modal */}
       {showShareBook && (
-        <ShareBookModal 
-          books={books}
-          onClose={() => setShowShareBook(false)}
-          onBookShared={() => {
-            setShowShareBook(false);
-            loadSocialData();
-          }}
-        />
+        <div className="modal-overlay" onClick={() => setShowShareBook(false)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()}>
+            <ShareBookModal 
+              books={books}
+              onClose={() => setShowShareBook(false)}
+              onBookShared={() => {
+                setShowShareBook(false);
+                loadSocialData();
+              }}
+            />
+          </div>
+        </div>
       )}
     </div>
   );

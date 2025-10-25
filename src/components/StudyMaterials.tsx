@@ -257,8 +257,8 @@ const CreateStudyMaterialForm: React.FC<CreateStudyMaterialFormProps> = ({
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal create-material-modal">
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal create-material-modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h3>Create Study Material</h3>
           <button className="btn-icon" onClick={onCancel}>✕</button>

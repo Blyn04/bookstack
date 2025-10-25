@@ -76,8 +76,8 @@ const BookForm: React.FC<BookFormProps> = ({ onSubmit, onCancel }) => {
   };
 
   return (
-    <div className="modal-overlay">
-      <div className="modal">
+    <div className="modal-overlay" onClick={onCancel}>
+      <div className="modal" onClick={(e) => e.stopPropagation()}>
         <div className="modal-header">
           <h2>Add New Book</h2>
           <button className="btn-icon" onClick={onCancel}>✕</button>

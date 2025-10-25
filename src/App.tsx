@@ -239,15 +239,19 @@ function AppContent() {
         </div>
 
         {showAddForm && (
-          <BookForm 
-            onSubmit={handleAddBook}
-            onCancel={() => setShowAddForm(false)}
-          />
+          <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
+            <div className="modal" onClick={(e) => e.stopPropagation()}>
+              <BookForm 
+                onSubmit={handleAddBook}
+                onCancel={() => setShowAddForm(false)}
+              />
+            </div>
+          </div>
         )}
 
         {showKnowledgeManagement && (
-          <div className="modal-overlay">
-            <div className="modal knowledge-modal">
+          <div className="modal-overlay" onClick={() => setShowKnowledgeManagement(false)}>
+            <div className="modal knowledge-modal" onClick={(e) => e.stopPropagation()}>
               <KnowledgeManagement 
                 books={books}
                 onClose={() => setShowKnowledgeManagement(false)}
@@ -257,8 +261,8 @@ function AppContent() {
         )}
 
         {showSocialFeatures && (
-          <div className="modal-overlay">
-            <div className="modal social-modal">
+          <div className="modal-overlay" onClick={() => setShowSocialFeatures(false)}>
+            <div className="modal social-modal" onClick={(e) => e.stopPropagation()}>
               <SocialFeatures 
                 books={books}
                 onClose={() => setShowSocialFeatures(false)}
@@ -268,8 +272,8 @@ function AppContent() {
         )}
 
         {showAIInsights && (
-          <div className="modal-overlay">
-            <div className="modal ai-insights-modal">
+          <div className="modal-overlay" onClick={() => setShowAIInsights(false)}>
+            <div className="modal ai-insights-modal" onClick={(e) => e.stopPropagation()}>
               <AIInsights 
                 books={books}
                 sessions={[]}
@@ -281,8 +285,8 @@ function AppContent() {
         )}
 
         {showAdvancedSearch && (
-          <div className="modal-overlay">
-            <div className="modal advanced-search-modal">
+          <div className="modal-overlay" onClick={() => setShowAdvancedSearch(false)}>
+            <div className="modal advanced-search-modal" onClick={(e) => e.stopPropagation()}>
               <AdvancedSearch 
                 books={books}
                 onSearch={(filteredBooks) => {
@@ -296,8 +300,8 @@ function AppContent() {
         )}
 
         {showReadingCalendar && (
-          <div className="modal-overlay">
-            <div className="modal reading-calendar-modal">
+          <div className="modal-overlay" onClick={() => setShowReadingCalendar(false)}>
+            <div className="modal reading-calendar-modal" onClick={(e) => e.stopPropagation()}>
               <ReadingCalendar 
                 books={books}
                 sessions={[]}
@@ -308,8 +312,8 @@ function AppContent() {
         )}
 
         {showExportImport && (
-          <div className="modal-overlay">
-            <div className="modal export-import-modal">
+          <div className="modal-overlay" onClick={() => setShowExportImport(false)}>
+            <div className="modal export-import-modal" onClick={(e) => e.stopPropagation()}>
               <ExportImport 
                 books={books}
                 onClose={() => setShowExportImport(false)}
@@ -324,8 +328,8 @@ function AppContent() {
         )}
 
         {showAchievements && (
-          <div className="modal-overlay">
-            <div className="modal achievements-modal">
+          <div className="modal-overlay" onClick={() => setShowAchievements(false)}>
+            <div className="modal achievements-modal" onClick={(e) => e.stopPropagation()}>
               <div className="modal-header">
                 <h2>🏆 Achievements</h2>
                 <button 
