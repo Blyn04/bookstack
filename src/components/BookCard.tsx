@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Book, BookStatus, Shelf } from '../types';
+import { Book, BookStatus } from '../types';
 import { bookService } from '../services/bookService';
 import ReadingSessionForm from './ReadingSessionForm';
 import ReadingSessionHistory from './ReadingSessionHistory';
 import Quotes from './Quotes';
 import ShelfPicker from './ShelfPicker';
+import BookReviews from './BookReviews';
 
 interface BookCardProps {
   book: Book;
@@ -16,6 +17,7 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showSessionForm, setShowSessionForm] = useState(false);
   const [showSessionHistory, setShowSessionHistory] = useState(false);
+  const [showReviews, setShowReviews] = useState(false);
   const [editData, setEditData] = useState({
     currentPage: book.currentPage,
     status: book.status,
@@ -214,6 +216,13 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
         >
           View History
         </button>
+        
+        <button 
+          className="btn btn-secondary"
+          onClick={() => setShowReviews(true)}
+        >
+          Reviews
+        </button>
       </div>
 
       {readingTime > 0 && (
@@ -242,6 +251,17 @@ const BookCard: React.FC<BookCardProps> = ({ book, onUpdate, onDelete }) => {
 
       {/* Quotes Section */}
       <Quotes book={book} onUpdate={handleQuotesUpdate} />
+
+      {showReviews && (
+        <div className="modal-overlay">
+          <div className="modal reviews-modal">
+            <BookReviews 
+              book={book}
+              onClose={() => setShowReviews(false)}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

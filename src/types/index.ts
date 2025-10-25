@@ -209,3 +209,89 @@ export interface ReadingNote {
   createdAt: Date;
   updatedAt: Date;
 }
+
+// Social Features Types
+export interface BookRecommendation {
+  id: string;
+  bookId: string;
+  recommendedBy: string; // User ID or system
+  reason: string;
+  confidence: number; // 0-1
+  createdAt: Date;
+  isRead: boolean;
+}
+
+export interface ReadingGroup {
+  id: string;
+  name: string;
+  description: string;
+  members: string[]; // User IDs
+  books: string[]; // Book IDs being read together
+  startDate: Date;
+  endDate?: Date;
+  isActive: boolean;
+  createdBy: string;
+  createdAt: Date;
+}
+
+export interface BookShare {
+  id: string;
+  bookId: string;
+  sharedBy: string;
+  message: string;
+  isPublic: boolean;
+  likes: string[]; // User IDs who liked
+  comments: BookShareComment[];
+  createdAt: Date;
+}
+
+export interface BookShareComment {
+  id: string;
+  shareId: string;
+  authorId: string;
+  content: string;
+  createdAt: Date;
+}
+
+export interface UserProfile {
+  id: string;
+  username: string;
+  displayName: string;
+  bio?: string;
+  readingPreferences: string[];
+  favoriteGenres: string[];
+  readingGoals: string[];
+  socialStats: {
+    booksShared: number;
+    recommendationsGiven: number;
+    groupsJoined: number;
+    followers: number;
+    following: number;
+  };
+  isPublic: boolean;
+  createdAt: Date;
+}
+
+export interface ReadingChallenge {
+  id: string;
+  title: string;
+  description: string;
+  type: 'books' | 'pages' | 'genres' | 'authors' | 'time';
+  target: number;
+  startDate: Date;
+  endDate: Date;
+  participants: string[]; // User IDs
+  isPublic: boolean;
+  createdBy: string;
+  rewards: string[];
+  rules: string[];
+  createdAt: Date;
+}
+
+export interface ChallengeProgress {
+  challengeId: string;
+  userId: string;
+  currentProgress: number;
+  completedAt?: Date;
+  lastUpdated: Date;
+}

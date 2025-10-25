@@ -8,6 +8,11 @@ import Shelves from './components/Shelves';
 import ReadingGoals from './components/ReadingGoals';
 import Achievements from './components/Achievements';
 import KnowledgeManagement from './components/KnowledgeManagement';
+import SocialFeatures from './components/SocialFeatures';
+import AIInsights from './components/AIInsights';
+import AdvancedSearch from './components/AdvancedSearch';
+import ReadingCalendar from './components/ReadingCalendar';
+import ExportImport from './components/ExportImport';
 import ThemeToggle from './components/ThemeToggle';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Book, BookStatus, Analytics as AnalyticsType, UserAchievement } from './types';
@@ -26,6 +31,11 @@ function AppContent() {
   const [selectedShelfId, setSelectedShelfId] = useState<string | 'all'>('all');
   const [showAchievements, setShowAchievements] = useState(false);
   const [showKnowledgeManagement, setShowKnowledgeManagement] = useState(false);
+  const [showSocialFeatures, setShowSocialFeatures] = useState(false);
+  const [showAIInsights, setShowAIInsights] = useState(false);
+  const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
+  const [showReadingCalendar, setShowReadingCalendar] = useState(false);
+  const [showExportImport, setShowExportImport] = useState(false);
   const [newAchievements, setNewAchievements] = useState<UserAchievement[]>([]);
 
   useEffect(() => {
@@ -33,11 +43,11 @@ function AppContent() {
     loadAnalytics();
     updateGoalProgress();
     checkAchievements();
-  }, []);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     filterBooks();
-  }, [books, searchQuery, filterStatus, selectedShelfId]);
+  }, [books, searchQuery, filterStatus, selectedShelfId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadBooks = async () => {
     const booksData = await bookService.getAllBooks();
@@ -140,6 +150,36 @@ function AppContent() {
           </button>
           <button 
             className="btn btn-secondary"
+            onClick={() => setShowSocialFeatures(true)}
+          >
+            🌟 Social
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowAIInsights(true)}
+          >
+            🤖 AI Insights
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowAdvancedSearch(true)}
+          >
+            🔍 Advanced Search
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowReadingCalendar(true)}
+          >
+            📅 Calendar
+          </button>
+          <button 
+            className="btn btn-secondary"
+            onClick={() => setShowExportImport(true)}
+          >
+            📤 Export/Import
+          </button>
+          <button 
+            className="btn btn-secondary"
             onClick={() => setShowAchievements(true)}
           >
             🏆 Achievements
@@ -211,6 +251,73 @@ function AppContent() {
               <KnowledgeManagement 
                 books={books}
                 onClose={() => setShowKnowledgeManagement(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {showSocialFeatures && (
+          <div className="modal-overlay">
+            <div className="modal social-modal">
+              <SocialFeatures 
+                books={books}
+                onClose={() => setShowSocialFeatures(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {showAIInsights && (
+          <div className="modal-overlay">
+            <div className="modal ai-insights-modal">
+              <AIInsights 
+                books={books}
+                sessions={[]}
+                analytics={analytics!}
+                onClose={() => setShowAIInsights(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {showAdvancedSearch && (
+          <div className="modal-overlay">
+            <div className="modal advanced-search-modal">
+              <AdvancedSearch 
+                books={books}
+                onSearch={(filteredBooks) => {
+                  setFilteredBooks(filteredBooks);
+                  setShowAdvancedSearch(false);
+                }}
+                onClose={() => setShowAdvancedSearch(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {showReadingCalendar && (
+          <div className="modal-overlay">
+            <div className="modal reading-calendar-modal">
+              <ReadingCalendar 
+                books={books}
+                sessions={[]}
+                onClose={() => setShowReadingCalendar(false)}
+              />
+            </div>
+          </div>
+        )}
+
+        {showExportImport && (
+          <div className="modal-overlay">
+            <div className="modal export-import-modal">
+              <ExportImport 
+                books={books}
+                onClose={() => setShowExportImport(false)}
+                onImportComplete={() => {
+                  setShowExportImport(false);
+                  loadBooks();
+                  loadAnalytics();
+                }}
               />
             </div>
           </div>
