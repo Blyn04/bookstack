@@ -3249,6 +3249,46 @@ body {
   border-radius: 50%;
 }
 
+.calendar-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.calendar-navigation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.calendar-navigation button {
+  background: transparent;
+  border: 1px solid #007bff;
+  color: #007bff;
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.calendar-navigation button:hover {
+  background-color: #007bff;
+  color: #fff;
+}
+
+.calendar-navigation h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #333;
+  text-align: center;
+  min-width: 140px;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .knowledge-management-header {

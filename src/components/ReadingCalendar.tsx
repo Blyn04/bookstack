@@ -33,7 +33,6 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
   const generateEvents = () => {
     const calendarEvents: CalendarEvent[] = [];
 
-    // Add reading sessions
     sessions.forEach(session => {
       calendarEvents.push({
         id: `session-${session.id}`,
@@ -48,7 +47,6 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
       });
     });
 
-    // Add book start dates
     books.forEach(book => {
       if (book.startDate) {
         calendarEvents.push({
@@ -61,7 +59,6 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
         });
       }
 
-      // Add book finish dates
       if (book.finishDate) {
         calendarEvents.push({
           id: `finish-${book.id}`,
@@ -86,24 +83,14 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
     const startingDayOfWeek = firstDay.getDay();
 
     const days = [];
-    
-    // Add empty cells for days before the first day of the month
-    for (let i = 0; i < startingDayOfWeek; i++) {
-      days.push(null);
-    }
-    
-    // Add days of the month
-    for (let day = 1; day <= daysInMonth; day++) {
-      days.push(new Date(year, month, day));
-    }
-    
+    for (let i = 0; i < startingDayOfWeek; i++) days.push(null);
+    for (let day = 1; day <= daysInMonth; day++) days.push(new Date(year, month, day));
+
     return days;
   };
 
   const getEventsForDate = (date: Date) => {
-    return events.filter(event => 
-      event.date.toDateString() === date.toDateString()
-    );
+    return events.filter(event => event.date.toDateString() === date.toDateString());
   };
 
   const getEventIcon = (type: string) => {
@@ -128,11 +115,8 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
 
   const navigateMonth = (direction: 'prev' | 'next') => {
     const newDate = new Date(currentDate);
-    if (direction === 'prev') {
-      newDate.setMonth(newDate.getMonth() - 1);
-    } else {
-      newDate.setMonth(newDate.getMonth() + 1);
-    }
+    if (direction === 'prev') newDate.setMonth(newDate.getMonth() - 1);
+    else newDate.setMonth(newDate.getMonth() + 1);
     setCurrentDate(newDate);
   };
 
@@ -175,8 +159,9 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
             Day
           </button>
         </div>
-        
-        <div className="navigation-controls">
+
+        {/* 🔹 FIXED SECTION: Centered arrows + month title */}
+        <div className="calendar-navigation">
           <button 
             className="btn btn-secondary btn-small"
             onClick={() => navigateMonth('prev')}
@@ -193,7 +178,7 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
         </div>
 
         <button 
-          className="btn btn-primary"
+          className="btn btn-primary add-event-btn"
           onClick={() => setShowAddEvent(true)}
         >
           Add Event
@@ -250,15 +235,9 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
                 </div>
                 <div className="event-details">
                   <p><strong>Book:</strong> {event.bookTitle}</p>
-                  {event.duration && (
-                    <p><strong>Duration:</strong> {event.duration} minutes</p>
-                  )}
-                  {event.pagesRead && (
-                    <p><strong>Pages Read:</strong> {event.pagesRead}</p>
-                  )}
-                  {event.notes && (
-                    <p><strong>Notes:</strong> {event.notes}</p>
-                  )}
+                  {event.duration && <p><strong>Duration:</strong> {event.duration} minutes</p>}
+                  {event.pagesRead && <p><strong>Pages Read:</strong> {event.pagesRead}</p>}
+                  {event.notes && <p><strong>Notes:</strong> {event.notes}</p>}
                 </div>
               </div>
             ))}
@@ -305,7 +284,7 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
   );
 };
 
-// Add Event Modal Component
+/* ========== Add Event Modal ========== */
 interface AddEventModalProps {
   books: Book[];
   onClose: () => void;
@@ -325,8 +304,6 @@ const AddEventModal: React.FC<AddEventModalProps> = ({ books, onClose, onEventAd
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real app, this would save to a backend
-    // For now, we'll just close the modal
     onEventAdded();
   };
 
