@@ -2772,6 +2772,64 @@ body {
   overflow-y: auto;
 }
 
+/* Modal overlay - dim background and center content */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+  overflow: auto;
+  padding: 20px; /* Prevents edges cutoff */
+}
+
+/* Modal box */
+.modal {
+  background-color: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 600px; /* Adjust as needed */
+  width: 100%;
+  max-height: 90vh; /* Prevents overflowing screen */
+  overflow-y: auto;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  position: relative;
+  animation: fadeInUp 0.3s ease;
+}
+
+/* Optional: animation for smooth appearance */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Optional: close button styling */
+.modal .btn-icon {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: #666;
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.modal .btn-icon:hover {
+  color: #000;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .knowledge-management-header {
