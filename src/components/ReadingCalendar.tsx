@@ -284,7 +284,6 @@ const ReadingCalendar: React.FC<ReadingCalendarProps> = ({ books, sessions, onCl
   );
 };
 
-/* ========== Add Event Modal ========== */
 interface AddEventModalProps {
   books: Book[];
   onClose: () => void;
