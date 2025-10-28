@@ -15,7 +15,7 @@ export const sampleConcepts: Omit<Concept, 'id' | 'createdAt' | 'updatedAt'>[] =
     ]
   },
   {
-    name: 'Neural Networks',
+    name: 'Neural Network',
     description: 'Computing systems inspired by biological neural networks that can learn to perform tasks by considering examples.',
     category: 'technology',
     tags: ['AI', 'deep learning', 'algorithms', 'brain'],
