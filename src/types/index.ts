@@ -12,7 +12,7 @@ export interface Book {
   genre?: string;
   isbn?: string;
   quotes?: Quote[];
-  shelves?: string[]; // array of shelf ids
+  shelves?: string[]; 
 }
 
 export enum BookStatus {
@@ -27,7 +27,7 @@ export interface ReadingSession {
   bookId: string;
   date: Date;
   pagesRead: number;
-  duration: number; // in minutes
+  duration: number;
   notes?: string;
 }
 
@@ -50,10 +50,10 @@ export interface Analytics {
   longestStreak?: number;
   favoriteGenre?: string;
   averageRating?: number;
-  totalReadingTime: number; // in hours
+  totalReadingTime: number; 
   averageBookLength: number;
   completionRate: number;
-  readingVelocity: number; // pages per hour
+  readingVelocity: number;
   badges?: BadgeAchievement[];
 }
 
