@@ -134,10 +134,8 @@ const MindMap: React.FC<MindMapProps> = ({ mindMapId, onSave, onClose }) => {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw connections first
     mindMap.nodes.forEach(node => {
       node.connections.forEach(connectionId => {
         const targetNode = mindMap.nodes.find(n => n.id === connectionId);
@@ -152,12 +150,10 @@ const MindMap: React.FC<MindMapProps> = ({ mindMapId, onSave, onClose }) => {
       });
     });
 
-    // Draw nodes
     mindMap.nodes.forEach(node => {
       const concept = concepts.find(c => c.id === node.conceptId);
       const isSelected = selectedNode === node.id;
-      
-      // Node circle
+
       ctx.beginPath();
       ctx.arc(node.x, node.y, 30, 0, 2 * Math.PI);
       ctx.fillStyle = isSelected ? '#4CAF50' : '#2196F3';
