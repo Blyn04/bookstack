@@ -162,7 +162,6 @@ const MindMap: React.FC<MindMapProps> = ({ mindMapId, onSave, onClose }) => {
       ctx.lineWidth = 2;
       ctx.stroke();
 
-      // Node text
       ctx.fillStyle = 'white';
       ctx.font = '12px Arial';
       ctx.textAlign = 'center';
@@ -175,7 +174,6 @@ const MindMap: React.FC<MindMapProps> = ({ mindMapId, onSave, onClose }) => {
       ctx.fillText(text, node.x, node.y);
     });
 
-    // Draw new node position indicator
     if (newNodePosition) {
       ctx.beginPath();
       ctx.arc(newNodePosition.x, newNodePosition.y, 30, 0, 2 * Math.PI);
