@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import './App.css';
+import Header from './components/Header';
+import Login from './components/Login';
+import Signup from './components/Signup';
 import BookList from './components/BookList';
 import BookForm from './components/BookForm';
 import Analytics from './components/Analytics';
@@ -13,7 +16,6 @@ import AIInsights from './components/AIInsights';
 import AdvancedSearch from './components/AdvancedSearch';
 import ReadingCalendar from './components/ReadingCalendar';
 import ExportImport from './components/ExportImport';
-import ThemeToggle from './components/ThemeToggle';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Book, BookStatus, Analytics as AnalyticsType, UserAchievement } from './types';
 import { bookService } from './services/bookService';
@@ -25,10 +27,11 @@ function AppContent() {
   const [books, setBooks] = useState<Book[]>([]);
   const [filteredBooks, setFilteredBooks] = useState<Book[]>([]);
   const [analytics, setAnalytics] = useState<AnalyticsType | null>(null);
+  const [user, setUser] = useState<string | null>(localStorage.getItem('user'));
   const [searchQuery, setSearchQuery] = useState('');
   const [filterStatus, setFilterStatus] = useState<BookStatus | 'all'>('all');
-  const [showAddForm, setShowAddForm] = useState(false);
   const [selectedShelfId, setSelectedShelfId] = useState<string | 'all'>('all');
+  const [showAddForm, setShowAddForm] = useState(false);
   const [showAchievements, setShowAchievements] = useState(false);
   const [showKnowledgeManagement, setShowKnowledgeManagement] = useState(false);
   const [showSocialFeatures, setShowSocialFeatures] = useState(false);
@@ -36,14 +39,18 @@ function AppContent() {
   const [showAdvancedSearch, setShowAdvancedSearch] = useState(false);
   const [showReadingCalendar, setShowReadingCalendar] = useState(false);
   const [showExportImport, setShowExportImport] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
+  const [showSignup, setShowSignup] = useState(false);
   const [newAchievements, setNewAchievements] = useState<UserAchievement[]>([]);
 
   useEffect(() => {
-    loadBooks();
-    loadAnalytics();
-    updateGoalProgress();
-    checkAchievements();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (user) {
+      loadBooks();
+      loadAnalytics();
+      updateGoalProgress();
+      checkAchievements();
+    }
+  }, [user]);
 
   useEffect(() => {
     filterBooks();
@@ -79,7 +86,7 @@ function AppContent() {
     let filtered = books;
 
     if (searchQuery) {
-      filtered = filtered.filter(book => 
+      filtered = filtered.filter(book =>
         book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         book.author.toLowerCase().includes(searchQuery.toLowerCase())
       );
@@ -97,16 +104,12 @@ function AppContent() {
   };
 
   const handleAddBook = async (bookData: Omit<Book, 'id'>) => {
-    try {
-      const newBook = await bookService.addBook(bookData);
-      setBooks(prev => [...prev, newBook]);
-      loadAnalytics();
-      updateGoalProgress();
-      checkAchievements();
-      setShowAddForm(false); 
-    } catch (err: any) {
-      alert(err?.message || 'Failed to add book');
-    }
+    const newBook = await bookService.addBook(bookData);
+    setBooks(prev => [...prev, newBook]);
+    loadAnalytics();
+    updateGoalProgress();
+    checkAchievements();
+    setShowAddForm(false);
   };
 
   const handleUpdateBook = async (id: string, updates: Partial<Book>) => {
@@ -127,227 +130,179 @@ function AppContent() {
 
   const handleExportBooks = () => {
     const dataStr = JSON.stringify(books, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr);
-    const exportFileDefaultName = 'reading-list.json';
-    
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
     const linkElement = document.createElement('a');
     linkElement.setAttribute('href', dataUri);
-    linkElement.setAttribute('download', exportFileDefaultName);
+    linkElement.setAttribute('download', 'reading-list.json');
     linkElement.click();
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem('user');
+    setUser(null);
   };
 
   return (
     <div className="App">
-      <header className="app-header">
-        <h1>📚 Book Reading Tracker</h1>
-        <div className="header-actions">
-          <ThemeToggle />
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowKnowledgeManagement(true)}
-          >
-            🧠 Knowledge
-          </button>
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowSocialFeatures(true)}
-          >
-            🌟 Social
-          </button>
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowAIInsights(true)}
-          >
-            🤖 AI Insights
-          </button>
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowAdvancedSearch(true)}
-          >
-            🔍 Advanced Search
-          </button>
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowReadingCalendar(true)}
-          >
-            📅 Calendar
-          </button>
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowExportImport(true)}
-          >
-            📤 Export/Import
-          </button>
-          <button 
-            className="btn btn-secondary"
-            onClick={() => setShowAchievements(true)}
-          >
-            🏆 Achievements
-            {newAchievements.length > 0 && (
-              <span className="notification-badge">{newAchievements.length}</span>
-            )}
-          </button>
-          <button 
-            className="btn btn-primary"
-            onClick={() => setShowAddForm(true)}
-          >
-            Add Book
-          </button>
-          <button 
-            className="btn btn-secondary"
-            onClick={handleExportBooks}
-          >
-            Export List
-          </button>
-        </div>
-      </header>
+      <Header
+        onAddBook={() => setShowAddForm(true)}
+        onShowAchievements={() => setShowAchievements(true)}
+        onShowKnowledge={() => setShowKnowledgeManagement(true)}
+        onShowSocial={() => setShowSocialFeatures(true)}
+        onShowAI={() => setShowAIInsights(true)}
+        onShowAdvancedSearch={() => setShowAdvancedSearch(true)}
+        onShowCalendar={() => setShowReadingCalendar(true)}
+        onShowExportImport={() => setShowExportImport(true)}
+        onExportBooks={handleExportBooks}
+        achievementsCount={newAchievements.length}
+        onLogin={() => setShowLogin(true)}
+        onSignup={() => setShowSignup(true)}
+        onLogout={handleLogout}
+        user={user}
+      />
 
-      <main className="app-main">
-        <div className="search-section">
-          <SearchBar 
-            searchQuery={searchQuery}
-            onSearchChange={setSearchQuery}
-            filterStatus={filterStatus}
-            onFilterChange={setFilterStatus}
-            selectedShelfId={selectedShelfId}
-            onShelfChange={setSelectedShelfId}
-          />
-        </div>
+      {/* 🧠 Show login prompt when no user */}
+      {!user && (
+        <p style={{ textAlign: 'center', marginTop: 20 }}>
+          Please log in or sign up to access your reading tracker.
+        </p>
+      )}
 
-        <div className="content-grid">
-          <div className="books-section">
-            <BookList 
-              books={filteredBooks}
-              onUpdateBook={handleUpdateBook}
-              onDeleteBook={handleDeleteBook}
+      {/* ✅ Your full main UI (only shown if logged in) */}
+      {user && (
+        <main className="app-main">
+          <div className="search-section">
+            <SearchBar
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              filterStatus={filterStatus}
+              onFilterChange={setFilterStatus}
+              selectedShelfId={selectedShelfId}
+              onShelfChange={setSelectedShelfId}
             />
           </div>
 
-          <div className="sidebar-section">
-            <div className="analytics-section">
-              {analytics && <Analytics analytics={analytics} />}
-            </div>
-            
-            <div className="goals-section">
-              <ReadingGoals onGoalUpdate={updateGoalProgress} />
+          <div className="content-grid">
+            <div className="books-section">
+              <BookList
+                books={filteredBooks}
+                onUpdateBook={handleUpdateBook}
+                onDeleteBook={handleDeleteBook}
+              />
             </div>
 
-            <div className="goals-section">
+            <div className="sidebar-section">
+              {analytics && <Analytics analytics={analytics} />}
+              <ReadingGoals onGoalUpdate={updateGoalProgress} />
               <Shelves selectedShelfId={selectedShelfId} onShelfChange={setSelectedShelfId} />
             </div>
           </div>
-        </div>
 
-        {showAddForm && (
-          <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
-            <div className="modal" onClick={(e) => e.stopPropagation()}>
-              <BookForm 
-                onSubmit={handleAddBook}
-                onCancel={() => setShowAddForm(false)}
-              />
-            </div>
-          </div>
-        )}
-
-        {showKnowledgeManagement && (
-          <div className="modal-overlay" onClick={() => setShowKnowledgeManagement(false)}>
-            <div className="modal knowledge-modal" onClick={(e) => e.stopPropagation()}>
-              <KnowledgeManagement 
-                books={books}
-                onClose={() => setShowKnowledgeManagement(false)}
-              />
-            </div>
-          </div>
-        )}
-
-        {showSocialFeatures && (
-          <div className="modal-overlay" onClick={() => setShowSocialFeatures(false)}>
-            <div className="modal social-modal" onClick={(e) => e.stopPropagation()}>
-              <SocialFeatures 
-                books={books}
-                onClose={() => setShowSocialFeatures(false)}
-              />
-            </div>
-          </div>
-        )}
-
-        {showAIInsights && (
-          <div className="modal-overlay" onClick={() => setShowAIInsights(false)}>
-            <div className="modal ai-insights-modal" onClick={(e) => e.stopPropagation()}>
-              <AIInsights 
-                books={books}
-                sessions={[]}
-                analytics={analytics!}
-                onClose={() => setShowAIInsights(false)}
-              />
-            </div>
-          </div>
-        )}
-
-        {showAdvancedSearch && (
-          <div className="modal-overlay" onClick={() => setShowAdvancedSearch(false)}>
-            <div className="modal advanced-search-modal" onClick={(e) => e.stopPropagation()}>
-              <AdvancedSearch 
-                books={books}
-                onSearch={(filteredBooks) => {
-                  setFilteredBooks(filteredBooks);
-                  setShowAdvancedSearch(false);
-                }}
-                onClose={() => setShowAdvancedSearch(false)}
-              />
-            </div>
-          </div>
-        )}
-
-        {showReadingCalendar && (
-          <div className="modal-overlay" onClick={() => setShowReadingCalendar(false)}>
-            <div className="modal reading-calendar-modal" onClick={(e) => e.stopPropagation()}>
-              <ReadingCalendar 
-                books={books}
-                sessions={[]}
-                onClose={() => setShowReadingCalendar(false)}
-              />
-            </div>
-          </div>
-        )}
-
-        {showExportImport && (
-          <div className="modal-overlay" onClick={() => setShowExportImport(false)}>
-            <div className="modal export-import-modal" onClick={(e) => e.stopPropagation()}>
-              <ExportImport 
-                books={books}
-                onClose={() => setShowExportImport(false)}
-                onImportComplete={() => {
-                  setShowExportImport(false);
-                  loadBooks();
-                  loadAnalytics();
-                }}
-              />
-            </div>
-          </div>
-        )}
-
-        {showAchievements && (
-          <div className="modal-overlay" onClick={() => setShowAchievements(false)}>
-            <div className="modal achievements-modal" onClick={(e) => e.stopPropagation()}>
-              <div className="modal-header">
-                <h2>🏆 Achievements</h2>
-                <button 
-                  className="btn-icon" 
-                  onClick={() => setShowAchievements(false)}
-                >
-                  ✕
-                </button>
+          {/* Modals below */}
+          {showAddForm && (
+            <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <BookForm onSubmit={handleAddBook} onCancel={() => setShowAddForm(false)} />
               </div>
-              <Achievements 
-                onNewAchievement={(achievement) => {
-                  setNewAchievements(prev => prev.filter(a => a.achievementId !== achievement.achievementId));
-                }}
-              />
             </div>
-          </div>
-        )}
-      </main>
+          )}
+
+          {showKnowledgeManagement && (
+            <div className="modal-overlay" onClick={() => setShowKnowledgeManagement(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <KnowledgeManagement
+                  books={books}
+                  onClose={() => setShowKnowledgeManagement(false)}
+                />
+              </div>
+            </div>
+          )}
+
+          {showSocialFeatures && (
+            <div className="modal-overlay" onClick={() => setShowSocialFeatures(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <SocialFeatures
+                  books={books}
+                  onClose={() => setShowSocialFeatures(false)}
+                />
+              </div>
+            </div>
+          )}
+
+          {showAIInsights && (
+            <div className="modal-overlay" onClick={() => setShowAIInsights(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <AIInsights
+                  books={books}
+                  sessions={[]}
+                  analytics={analytics!}
+                  onClose={() => setShowAIInsights(false)}
+                />
+              </div>
+            </div>
+          )}
+
+          {showAdvancedSearch && (
+            <div className="modal-overlay" onClick={() => setShowAdvancedSearch(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <AdvancedSearch
+                  books={books}
+                  onSearch={(filtered) => {
+                    setFilteredBooks(filtered);
+                    setShowAdvancedSearch(false);
+                  }}
+                  onClose={() => setShowAdvancedSearch(false)}
+                />
+              </div>
+            </div>
+          )}
+
+          {showReadingCalendar && (
+            <div className="modal-overlay" onClick={() => setShowReadingCalendar(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <ReadingCalendar
+                  books={books}
+                  sessions={[]}
+                  onClose={() => setShowReadingCalendar(false)}
+                />
+              </div>
+            </div>
+          )}
+
+          {showExportImport && (
+            <div className="modal-overlay" onClick={() => setShowExportImport(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <ExportImport
+                  books={books}
+                  onClose={() => setShowExportImport(false)}
+                  onImportComplete={() => {
+                    setShowExportImport(false);
+                    loadBooks();
+                    loadAnalytics();
+                  }}
+                />
+              </div>
+            </div>
+          )}
+
+          {showAchievements && (
+            <div className="modal-overlay" onClick={() => setShowAchievements(false)}>
+              <div className="modal" onClick={(e) => e.stopPropagation()}>
+                <Achievements
+                  onNewAchievement={(achievement) => {
+                    setNewAchievements(prev =>
+                      prev.filter(a => a.achievementId !== achievement.achievementId)
+                    );
+                  }}
+                />
+              </div>
+            </div>
+          )}
+        </main>
+      )}
+
+      {showLogin && <Login onClose={() => setShowLogin(false)} onLoginSuccess={setUser} />}
+      {showSignup && <Signup onClose={() => setShowSignup(false)} onSignupSuccess={setUser} />}
     </div>
   );
 }
