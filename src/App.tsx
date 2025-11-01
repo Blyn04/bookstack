@@ -54,7 +54,7 @@ function AppContent() {
 
   useEffect(() => {
     filterBooks();
-  }, [books, searchQuery, filterStatus, selectedShelfId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [books, searchQuery, filterStatus, selectedShelfId]); 
 
   const loadBooks = async () => {
     const booksData = await bookService.getAllBooks();
@@ -161,14 +161,12 @@ function AppContent() {
         user={user}
       />
 
-      {/* 🧠 Show login prompt when no user */}
       {!user && (
         <p style={{ textAlign: 'center', marginTop: 20 }}>
           Please log in or sign up to access your reading tracker.
         </p>
       )}
 
-      {/* ✅ Your full main UI (only shown if logged in) */}
       {user && (
         <main className="app-main">
           <div className="search-section">
@@ -198,7 +196,6 @@ function AppContent() {
             </div>
           </div>
 
-          {/* Modals below */}
           {showAddForm && (
             <div className="modal-overlay" onClick={() => setShowAddForm(false)}>
               <div className="modal" onClick={(e) => e.stopPropagation()}>
