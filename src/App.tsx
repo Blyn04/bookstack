@@ -22,6 +22,7 @@ import { bookService } from './services/bookService';
 import { analyticsService } from './services/analyticsService';
 import { goalService } from './services/goalService';
 import { achievementService } from './services/achievementService';
+import LandingPage from './components/LandingPage';
 
 function AppContent() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -305,9 +306,11 @@ function AppContent() {
 }
 
 function App() {
+  const user = localStorage.getItem('user');
+
   return (
     <ThemeProvider>
-      <AppContent />
+       {user ? <AppContent /> : <LandingPage />}
     </ThemeProvider>
   );
 }
