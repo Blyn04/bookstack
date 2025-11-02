@@ -20,8 +20,8 @@ const Signup: React.FC<SignupProps> = ({ onClose, onSignupSuccess }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <div className="signup-overlay" onClick={onClose}>
+      <div className="signup-modal" onClick={(e) => e.stopPropagation()}>
         <h2>Sign Up</h2>
         <input
           type="text"
@@ -35,7 +35,9 @@ const Signup: React.FC<SignupProps> = ({ onClose, onSignupSuccess }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="btn btn-primary" onClick={handleSignup}>Sign Up</button>
+        <button className="signup-btn" onClick={handleSignup}>
+          Sign Up
+        </button>
       </div>
     </div>
   );

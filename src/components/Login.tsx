@@ -20,8 +20,8 @@ const Login: React.FC<LoginProps> = ({ onClose, onLoginSuccess }) => {
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal" onClick={(e) => e.stopPropagation()}>
+    <div className="login-overlay" onClick={onClose}>
+      <div className="login-modal" onClick={(e) => e.stopPropagation()}>
         <h2>Login</h2>
         <input
           type="text"
@@ -35,7 +35,9 @@ const Login: React.FC<LoginProps> = ({ onClose, onLoginSuccess }) => {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
-        <button className="btn btn-primary" onClick={handleLogin}>Login</button>
+        <button className="login-btn" onClick={handleLogin}>
+          Login
+        </button>
       </div>
     </div>
   );
