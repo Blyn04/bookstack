@@ -7,7 +7,7 @@ const LandingPage: React.FC = () => {
 
   return (
     <div className="landing-page">
-      <header className="header">
+      {/* <header className="header">
         <h1 className="logo">
           <BookOpen className="icon" />
           Book Reading Tracker
@@ -20,7 +20,7 @@ const LandingPage: React.FC = () => {
             Sign Up
           </button>
         </div>
-      </header>
+      </header> */}
 
       <main className="hero">
         <h2>Track Your Reading Journey Effortlessly 📚</h2>

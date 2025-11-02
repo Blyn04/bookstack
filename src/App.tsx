@@ -16,13 +16,13 @@ import AIInsights from './components/AIInsights';
 import AdvancedSearch from './components/AdvancedSearch';
 import ReadingCalendar from './components/ReadingCalendar';
 import ExportImport from './components/ExportImport';
+import LandingPage from './components/LandingPage';
 import { ThemeProvider } from './contexts/ThemeContext';
 import { Book, BookStatus, Analytics as AnalyticsType, UserAchievement } from './types';
 import { bookService } from './services/bookService';
 import { analyticsService } from './services/analyticsService';
 import { goalService } from './services/goalService';
 import { achievementService } from './services/achievementService';
-import LandingPage from './components/LandingPage';
 
 function AppContent() {
   const [books, setBooks] = useState<Book[]>([]);
@@ -55,7 +55,7 @@ function AppContent() {
 
   useEffect(() => {
     filterBooks();
-  }, [books, searchQuery, filterStatus, selectedShelfId]); 
+  }, [books, searchQuery, filterStatus, selectedShelfId]);
 
   const loadBooks = async () => {
     const booksData = await bookService.getAllBooks();
@@ -76,7 +76,7 @@ function AppContent() {
       const sessions = await bookService.getReadingSessions();
       const newAchievements = await achievementService.checkAchievements(books, sessions);
       if (newAchievements.length > 0) {
-        setNewAchievements(prev => [...prev, ...newAchievements]);
+        setNewAchievements((prev) => [...prev, ...newAchievements]);
       }
     } catch (error) {
       console.error('Error checking achievements:', error);
@@ -87,18 +87,21 @@ function AppContent() {
     let filtered = books;
 
     if (searchQuery) {
-      filtered = filtered.filter(book =>
-        book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        book.author.toLowerCase().includes(searchQuery.toLowerCase())
+      filtered = filtered.filter(
+        (book) =>
+          book.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          book.author.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
     if (filterStatus !== 'all') {
-      filtered = filtered.filter(book => book.status === filterStatus);
+      filtered = filtered.filter((book) => book.status === filterStatus);
     }
 
     if (selectedShelfId !== 'all') {
-      filtered = filtered.filter(book => (book.shelves || []).includes(selectedShelfId as string));
+      filtered = filtered.filter((book) =>
+        (book.shelves || []).includes(selectedShelfId as string)
+      );
     }
 
     setFilteredBooks(filtered);
@@ -106,7 +109,7 @@ function AppContent() {
 
   const handleAddBook = async (bookData: Omit<Book, 'id'>) => {
     const newBook = await bookService.addBook(bookData);
-    setBooks(prev => [...prev, newBook]);
+    setBooks((prev) => [...prev, newBook]);
     loadAnalytics();
     updateGoalProgress();
     checkAchievements();
@@ -115,7 +118,7 @@ function AppContent() {
 
   const handleUpdateBook = async (id: string, updates: Partial<Book>) => {
     const updatedBook = await bookService.updateBook(id, updates);
-    setBooks(prev => prev.map(book => book.id === id ? updatedBook : book));
+    setBooks((prev) => prev.map((book) => (book.id === id ? updatedBook : book)));
     loadAnalytics();
     updateGoalProgress();
     checkAchievements();
@@ -123,7 +126,7 @@ function AppContent() {
 
   const handleDeleteBook = async (id: string) => {
     await bookService.deleteBook(id);
-    setBooks(prev => prev.filter(book => book.id !== id));
+    setBooks((prev) => prev.filter((book) => book.id !== id));
     loadAnalytics();
     updateGoalProgress();
     checkAchievements();
@@ -162,11 +165,7 @@ function AppContent() {
         user={user}
       />
 
-      {!user && (
-        <p style={{ textAlign: 'center', marginTop: 20 }}>
-          Please log in or sign up to access your reading tracker.
-        </p>
-      )}
+      {!user && <LandingPage />} 
 
       {user && (
         <main className="app-main">
@@ -219,10 +218,7 @@ function AppContent() {
           {showSocialFeatures && (
             <div className="modal-overlay" onClick={() => setShowSocialFeatures(false)}>
               <div className="modal" onClick={(e) => e.stopPropagation()}>
-                <SocialFeatures
-                  books={books}
-                  onClose={() => setShowSocialFeatures(false)}
-                />
+                <SocialFeatures books={books} onClose={() => setShowSocialFeatures(false)} />
               </div>
             </div>
           )}
@@ -288,8 +284,8 @@ function AppContent() {
               <div className="modal" onClick={(e) => e.stopPropagation()}>
                 <Achievements
                   onNewAchievement={(achievement) => {
-                    setNewAchievements(prev =>
-                      prev.filter(a => a.achievementId !== achievement.achievementId)
+                    setNewAchievements((prev) =>
+                      prev.filter((a) => a.achievementId !== achievement.achievementId)
                     );
                   }}
                 />
@@ -306,11 +302,9 @@ function AppContent() {
 }
 
 function App() {
-  const user = localStorage.getItem('user');
-
   return (
     <ThemeProvider>
-       {user ? <AppContent /> : <LandingPage />}
+      <AppContent />
     </ThemeProvider>
   );
 }
