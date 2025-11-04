@@ -42,8 +42,7 @@ const AIInsights: React.FC<AIInsightsProps> = ({ books, sessions, analytics, onC
       const newInsights = await aiService.generateInsights(books, sessions, analytics);
       await aiService.saveInsights(newInsights);
       setInsights(prev => [...prev, ...newInsights]);
-      
-      // Generate recommendations and goal suggestions
+
       const bookRecs = await aiService.getPersonalizedRecommendations(books);
       const goalSugs = await aiService.generateGoalSuggestions(analytics);
       
