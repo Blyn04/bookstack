@@ -3562,6 +3562,36 @@ body {
   }
 }
 
+.insights-tabs {
+  display: flex;
+  justify-content: center;
+  margin: 15px 0;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.insights-tabs .tab {
+  background: #f0f4ff;
+  border: 1px solid #cfd8ff;
+  color: #333;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+.insights-tabs .tab:hover {
+  background: #e3e9ff;
+}
+
+.insights-tabs .tab.active {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+  box-shadow: 0 2px 6px rgba(79, 70, 229, 0.3);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
   .knowledge-management-header {
