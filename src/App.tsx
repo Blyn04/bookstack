@@ -165,7 +165,7 @@ function AppContent() {
         user={user}
       />
 
-      {!user && <LandingPage />} 
+      {!user && <LandingPage onSignup={() => setShowSignup(true)} />} 
 
       {user && (
         <main className="app-main">
