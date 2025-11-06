@@ -100,7 +100,7 @@ const ReadingGoals: React.FC<ReadingGoalsProps> = ({ onGoalUpdate }) => {
         </div>
       ) : (
         <>
-          {/* Active Goals */}
+
           {activeGoals.length > 0 && (
             <div className="goals-section">
               <h4>Active Goals ({activeGoals.length})</h4>
