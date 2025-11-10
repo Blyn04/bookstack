@@ -47,26 +47,28 @@ const ExportImport: React.FC<ExportImportProps> = ({ books, onClose, onImportCom
           filename = `reading-list-${new Date().toISOString().split('T')[0]}.json`;
           mimeType = 'application/json';
           break;
+
         case 'csv':
           data = await exportImportService.exportToCSV(books, exportOptions);
           filename = `reading-list-${new Date().toISOString().split('T')[0]}.csv`;
           mimeType = 'text/csv';
-          break;
-        case 'goodreads':
+
+          case 'goodreads':
           data = await exportImportService.exportToGoodreads(books, exportOptions);
           filename = `goodreads-import-${new Date().toISOString().split('T')[0]}.csv`;
           mimeType = 'text/csv';
           break;
+
         case 'pdf':
           data = await exportImportService.exportToPDF(books, exportOptions);
           filename = `reading-list-${new Date().toISOString().split('T')[0]}.html`;
           mimeType = 'text/html';
           break;
+
         default:
           throw new Error('Unsupported export format');
       }
 
-      // Download the file
       const blob = new Blob([data], { type: mimeType });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
